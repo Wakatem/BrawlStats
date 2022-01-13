@@ -1,21 +1,34 @@
 #imports
 import tkinter as tk
+from matplotlib.pyplot import fill
+import requests as req
+import detailsSection as ds
+from turtle import width
 from tkinter import ttk
 from ctypes import windll
-import requests as req
+from PIL import Image, ImageTk
+from io import BytesIO
 
 """================================="""
 
+
 def getInput(textbox):
     return textbox.get()
+
 
 #simple networking
 def searchPlayer(textbox):
     playerID = getInput(textbox)
     getRequest = "http://brawlhallastats.herokuapp.com/api/submit-form3-by-id?player=" + playerID
     response = req.get(getRequest)
-    print(response.text)
+    
+    #clear textbox
     textbox.delete(0, 8)
+
+
+"""================================="""
+
+
 
 #fix blurriness on windows
 windll.shcore.SetProcessDpiAwareness(1)
@@ -23,19 +36,27 @@ windll.shcore.SetProcessDpiAwareness(1)
 #window setup
 root = tk.Tk()
 root.title("BrawlStats")
-root.geometry("1600x900+500+400")
+root.geometry("1600x940+500+400")
+root.resizable(width=False, height=False)
 
-detailsFrame = ttk.Frame(root, height=700)
-detailsFrame.pack()
+#TODO setup details section here
+detailsSection = ds.DetailsSection(root)
+detailsSection.displayLegend("ada")
 
-message = ttk.Label(root, text="Enter Brawlhalla ID:")
+
+centerFrame = ttk.Frame(root)
+centerFrame.pack()
+
+message = ttk.Label(centerFrame, text="Enter Brawlhalla ID:")
 message.pack()
 
-textbox = ttk.Entry()
-textbox.pack(pady=(15, 25))
+textbox = ttk.Entry(centerFrame)
+textbox.focus()
+textbox.pack(pady=(10, 25))
 
-button = ttk.Button(root, text="Search")
+button = ttk.Button(centerFrame, text="Search")
 button.bind('<Button>', lambda event: searchPlayer(textbox))
 button.pack()
+
 
 root.mainloop()
