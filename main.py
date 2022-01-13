@@ -1,8 +1,12 @@
 #imports
 import tkinter as tk
 from tkinter import ttk
+from ctypes import windll
 import requests as req
 
+
+#fix blurriness on windows
+windll.shcore.SetProcessDpiAwareness(1)
 
 #window setup
 root = tk.Tk()
