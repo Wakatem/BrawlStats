@@ -4,6 +4,18 @@ from tkinter import ttk
 from ctypes import windll
 import requests as req
 
+"""================================="""
+
+def getInput(textbox):
+    return textbox.get()
+
+#simple networking
+def searchPlayer(textbox):
+    playerID = getInput(textbox)
+    getRequest = "http://brawlhallastats.herokuapp.com/api/submit-form3-by-id?player=" + playerID
+    response = req.get(getRequest)
+    print(response.text)
+    textbox.delete(0, 8)
 
 #fix blurriness on windows
 windll.shcore.SetProcessDpiAwareness(1)
@@ -23,6 +35,7 @@ textbox = ttk.Entry()
 textbox.pack(pady=(15, 25))
 
 button = ttk.Button(root, text="Search")
+button.bind('<Button>', lambda event: searchPlayer(textbox))
 button.pack()
 
 root.mainloop()
