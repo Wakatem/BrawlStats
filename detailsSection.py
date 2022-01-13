@@ -1,6 +1,6 @@
 #imports
 import tkinter as tk
-from matplotlib.pyplot import fill
+from matplotlib.pyplot import fill, legend
 import requests as req
 from tkinter import ttk
 from ctypes import windll
@@ -89,8 +89,8 @@ class DetailsSection:
         self.canvas = tk.Canvas(self.leftFrame)
         self.canvas.pack()
 
-        legendName = ttk.Label(self.leftFrame, text="Ada", font='Helvetica 15 bold')
-        legendName.pack(padx=(0, 175), pady=(15, 20))
+        self.legendName = ttk.Label(self.leftFrame, text="Ada", font='Helvetica 15 bold')
+        self.legendName.pack(padx=(0, 175), pady=(15, 20))
 
         self.legendDetails = {"Wins" : 0, "Level" : 0, "KOs" : 0}
         self.label2 = ttk.Label(self.leftFrame, text="Wins: {Wins}   |   Level: {Level}   |   KOs: {KOs}".format(**self.legendDetails))
@@ -113,6 +113,9 @@ class DetailsSection:
         
         self.label4.config(text=detailsSTR)
         
+
+
+
     def displayLegend(self, topLegend):
         
         #retrieve pic url from given key
@@ -127,5 +130,34 @@ class DetailsSection:
     
         self.legendImage = ImageTk.PhotoImage(legend.resize(newsize))
         self.canvas.create_image(300, 300, image=self.legendImage)
+    
 
 
+    def updateDetails(self, detailsList):
+        self.playerDetails["Name"] = detailsList[0]
+        self.playerDetails["ID"] = detailsList[1]
+        self.playerDetails["Level"] = detailsList[2]
+
+        self.playerRecord["Games Played"] = detailsList[3]
+        self.playerRecord["Games Won"] = detailsList[4]
+        self.playerRecord["Games Lost"] = detailsList[5]
+
+        self.legendDetails["Wins"] = detailsList[7]
+        self.legendDetails["Level"] = detailsList[8]
+        self.legendDetails["KOs"] = detailsList[9]
+        
+
+        self.displayLegend(detailsList[6])
+        self.legendName["text"] = detailsList[6]
+        self.label2["text"] = "Wins: {Wins}   |   Level: {Level}   |   KOs: {KOs}".format(**self.legendDetails)
+
+
+        self.label3["text"] = "Name: {Name}   |   ID: {ID}   |   Level: {Level}".format(**self.playerDetails)
+
+
+        detailsSTR = "\n\n\n\n\n"
+        for entry in self.playerRecord:
+            detailsSTR += entry+": "+str(self.playerRecord.get(entry))
+            detailsSTR += "\n\n\n\n"
+        
+        self.label4.config(text=detailsSTR)

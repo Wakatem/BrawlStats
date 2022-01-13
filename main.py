@@ -1,22 +1,42 @@
 #imports
 import tkinter as tk
-from matplotlib.pyplot import fill
 import requests as req
+import json
 import detailsSection as ds
-from turtle import width
+from matplotlib.pyplot import fill
 from tkinter import ttk
 from ctypes import windll
-from PIL import Image, ImageTk
-from io import BytesIO
 
-"""================================="""
+"""==========================================="""
 
 
 def getInput(textbox):
     return textbox.get()
 
 
-#simple networking
+
+def parseResponse(response):
+    parsedDetails = json.loads(response.content)
+
+    playerName = parsedDetails["name"]
+    playerID = parsedDetails["brawlhalla_id"]
+    playerLevel = parsedDetails["level"]
+    playedGames = parsedDetails["games"]
+    gamesWon = parsedDetails["wins"]
+    gamesLost = int(playedGames) - int (gamesWon)
+
+    toplegend = parsedDetails["legends"][0]
+    legendName = toplegend["legend_name_key"]
+    legendWins = toplegend["wins"]
+    legendLevel = toplegend["level"]
+    legendKOs = toplegend["kos"]
+
+    list = [playerName, playerID, playerLevel, playedGames, gamesWon, gamesLost, legendName, legendWins, legendLevel, legendKOs]
+    
+    #send parsed data to details section
+    detailsSection.updateDetails(list)
+
+
 def searchPlayer(textbox):
     playerID = getInput(textbox)
     getRequest = "http://brawlhallastats.herokuapp.com/api/submit-form3-by-id?player=" + playerID
@@ -24,9 +44,28 @@ def searchPlayer(textbox):
     
     #clear textbox
     textbox.delete(0, 8)
+    parseResponse(response)
+    
 
 
-"""================================="""
+
+def setupInputSection(rootWindow):
+    inputFrame = ttk.Frame(rootWindow)
+    inputFrame.pack()
+
+    message = ttk.Label(inputFrame, text="Enter Brawlhalla ID:")
+    message.pack()
+
+    textbox = ttk.Entry(inputFrame)
+    textbox.focus()
+    textbox.pack(pady=(10, 25))
+
+    button = ttk.Button(inputFrame, text="Search")
+    button.bind('<Button>', lambda event: searchPlayer(textbox))
+    button.pack()
+
+
+"""==========================================="""
 
 
 
@@ -43,20 +82,7 @@ root.resizable(width=False, height=False)
 detailsSection = ds.DetailsSection(root)
 detailsSection.displayLegend("ada")
 
-
-centerFrame = ttk.Frame(root)
-centerFrame.pack()
-
-message = ttk.Label(centerFrame, text="Enter Brawlhalla ID:")
-message.pack()
-
-textbox = ttk.Entry(centerFrame)
-textbox.focus()
-textbox.pack(pady=(10, 25))
-
-button = ttk.Button(centerFrame, text="Search")
-button.bind('<Button>', lambda event: searchPlayer(textbox))
-button.pack()
+setupInputSection(root)
 
 
 root.mainloop()
