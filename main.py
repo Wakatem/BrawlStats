@@ -1,11 +1,16 @@
 #imports
+from io import BytesIO
 import tkinter as tk
+from itsdangerous import base64_decode
 import requests as req
 import json
+import base64
 import detailsSection as ds
 from matplotlib.pyplot import fill
 from tkinter import ttk
 from ctypes import windll
+from PIL import Image, ImageTk
+from icons import *
 
 """==========================================="""
 
@@ -67,6 +72,9 @@ def setupInputSection(rootWindow):
 
 """==========================================="""
 
+#setup program icon
+
+
 
 
 #fix blurriness on windows
@@ -78,6 +86,7 @@ root.title("BrawlStats")
 root.geometry("1600x940+500+400")
 root.resizable(width=False, height=False)
 
+
 #TODO setup details section here
 detailsSection = ds.DetailsSection(root)
 detailsSection.displayLegend("ada")
@@ -85,4 +94,8 @@ detailsSection.displayLegend("ada")
 setupInputSection(root)
 
 
+imagedata = base64_decode(icon3)
+image = Image.open(BytesIO(imagedata))
+icon = ImageTk.PhotoImage(image)
+root.iconphoto(False, icon)
 root.mainloop()
